@@ -219,6 +219,11 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // timer2
+            // 
+            this.timer2.Interval = 50;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -322,7 +327,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.Color.Red;
-            this.label3.Location = new System.Drawing.Point(1421, 763);
+            this.label3.Location = new System.Drawing.Point(782, 763);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(55, 15);
             this.label3.TabIndex = 55;
@@ -624,6 +629,7 @@
             this.butSend8.TabIndex = 118;
             this.butSend8.Text = "点击发送";
             this.butSend8.UseVisualStyleBackColor = true;
+            this.butSend8.Click += new System.EventHandler(this.butSend8_Click);
             // 
             // txtBoxSend8
             // 
@@ -631,6 +637,7 @@
             this.txtBoxSend8.Name = "txtBoxSend8";
             this.txtBoxSend8.Size = new System.Drawing.Size(298, 25);
             this.txtBoxSend8.TabIndex = 117;
+            this.txtBoxSend8.Text = "12 34";
             this.txtBoxSend8.DoubleClick += new System.EventHandler(this.txtBoxSend8_DoubleClick);
             // 
             // checkBoxHex8
@@ -650,6 +657,7 @@
             this.butSend7.TabIndex = 115;
             this.butSend7.Text = "点击发送";
             this.butSend7.UseVisualStyleBackColor = true;
+            this.butSend7.Click += new System.EventHandler(this.butSend7_Click);
             // 
             // txtBoxSend7
             // 
@@ -657,6 +665,7 @@
             this.txtBoxSend7.Name = "txtBoxSend7";
             this.txtBoxSend7.Size = new System.Drawing.Size(298, 25);
             this.txtBoxSend7.TabIndex = 114;
+            this.txtBoxSend7.Text = "12 34";
             this.txtBoxSend7.DoubleClick += new System.EventHandler(this.txtBoxSend7_DoubleClick);
             // 
             // checkBoxHex7
@@ -708,6 +717,7 @@
             this.butSend6.TabIndex = 108;
             this.butSend6.Text = "点击发送";
             this.butSend6.UseVisualStyleBackColor = true;
+            this.butSend6.Click += new System.EventHandler(this.butSend6_Click);
             // 
             // txtBoxSend6
             // 
@@ -715,6 +725,7 @@
             this.txtBoxSend6.Name = "txtBoxSend6";
             this.txtBoxSend6.Size = new System.Drawing.Size(298, 25);
             this.txtBoxSend6.TabIndex = 107;
+            this.txtBoxSend6.Text = "12 34";
             this.txtBoxSend6.DoubleClick += new System.EventHandler(this.txtBoxSend6_DoubleClick);
             // 
             // checkBoxHex6
@@ -734,6 +745,7 @@
             this.butSend5.TabIndex = 105;
             this.butSend5.Text = "点击发送";
             this.butSend5.UseVisualStyleBackColor = true;
+            this.butSend5.Click += new System.EventHandler(this.butSend5_Click);
             // 
             // txtBoxSend5
             // 
@@ -741,6 +753,7 @@
             this.txtBoxSend5.Name = "txtBoxSend5";
             this.txtBoxSend5.Size = new System.Drawing.Size(298, 25);
             this.txtBoxSend5.TabIndex = 104;
+            this.txtBoxSend5.Text = "12 34";
             this.txtBoxSend5.DoubleClick += new System.EventHandler(this.txtBoxSend5_DoubleClick);
             // 
             // checkBoxHex5
@@ -792,6 +805,7 @@
             this.butSend4.TabIndex = 98;
             this.butSend4.Text = "点击发送";
             this.butSend4.UseVisualStyleBackColor = true;
+            this.butSend4.Click += new System.EventHandler(this.butSend4_Click);
             // 
             // txtBoxSend4
             // 
@@ -799,6 +813,7 @@
             this.txtBoxSend4.Name = "txtBoxSend4";
             this.txtBoxSend4.Size = new System.Drawing.Size(298, 25);
             this.txtBoxSend4.TabIndex = 97;
+            this.txtBoxSend4.Text = "12 34";
             this.txtBoxSend4.DoubleClick += new System.EventHandler(this.txtBoxSend4_DoubleClick);
             // 
             // checkBoxHex4
@@ -818,6 +833,7 @@
             this.butSend3.TabIndex = 95;
             this.butSend3.Text = "点击发送";
             this.butSend3.UseVisualStyleBackColor = true;
+            this.butSend3.Click += new System.EventHandler(this.butSend3_Click);
             // 
             // txtBoxSend3
             // 
@@ -825,6 +841,7 @@
             this.txtBoxSend3.Name = "txtBoxSend3";
             this.txtBoxSend3.Size = new System.Drawing.Size(298, 25);
             this.txtBoxSend3.TabIndex = 94;
+            this.txtBoxSend3.Text = "12 34";
             this.txtBoxSend3.DoubleClick += new System.EventHandler(this.txtBoxSend3_DoubleClick);
             // 
             // checkBoxHex3
@@ -889,7 +906,7 @@
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(261, 29);
+            this.label25.Location = new System.Drawing.Point(376, 29);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(67, 15);
             this.label25.TabIndex = 86;
@@ -898,11 +915,12 @@
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(237, 27);
+            this.checkBox4.Location = new System.Drawing.Point(352, 27);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(18, 17);
             this.checkBox4.TabIndex = 85;
             this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
             // 
             // butSend2
             // 
@@ -912,6 +930,7 @@
             this.butSend2.TabIndex = 84;
             this.butSend2.Text = "点击发送";
             this.butSend2.UseVisualStyleBackColor = true;
+            this.butSend2.Click += new System.EventHandler(this.butSend2_Click);
             // 
             // txtBoxSend2
             // 
@@ -919,6 +938,7 @@
             this.txtBoxSend2.Name = "txtBoxSend2";
             this.txtBoxSend2.Size = new System.Drawing.Size(298, 25);
             this.txtBoxSend2.TabIndex = 83;
+            this.txtBoxSend2.Text = "Owner:Sad Code";
             this.txtBoxSend2.DoubleClick += new System.EventHandler(this.txtBoxSend2_DoubleClick);
             // 
             // checkBoxHex2
@@ -933,11 +953,12 @@
             // label24
             // 
             this.label24.AutoSize = true;
+            this.label24.ForeColor = System.Drawing.Color.Red;
             this.label24.Location = new System.Drawing.Point(6, 29);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(211, 15);
+            this.label24.Size = new System.Drawing.Size(324, 15);
             this.label24.TabIndex = 80;
-            this.label24.Text = "勾选HEX发送，不勾选字符发送";
+            this.label24.Text = "勾选HEX发送否则字符发送 双击文本框修改名称";
             // 
             // butSend1
             // 
@@ -947,6 +968,7 @@
             this.butSend1.TabIndex = 81;
             this.butSend1.Text = "点击发送";
             this.butSend1.UseVisualStyleBackColor = true;
+            this.butSend1.Click += new System.EventHandler(this.butSend1_Click);
             // 
             // txtBoxSend1
             // 
@@ -954,6 +976,7 @@
             this.txtBoxSend1.Name = "txtBoxSend1";
             this.txtBoxSend1.Size = new System.Drawing.Size(298, 25);
             this.txtBoxSend1.TabIndex = 80;
+            this.txtBoxSend1.Text = "Welcome to use";
             this.txtBoxSend1.DoubleClick += new System.EventHandler(this.txtBoxSend1_DoubleClick_1);
             // 
             // checkBoxHex1

@@ -219,7 +219,7 @@ namespace ModBus调试助手
                     label5.Text = DeviceID.ToString("X2");
                     serialPort1.DiscardInBuffer();
                 }
-                
+
                 if (buf[1] == 0x06 && CMD == 0x01)
                 {
                     label3.Text = "设置成功!";
@@ -267,19 +267,19 @@ namespace ModBus调试助手
                 byte funcCode = requestData[1];          // 功能码
                 ushort startAddr = (ushort)((requestData[2] << 8) | requestData[3]);  // 起始地址
                 ushort quantity = (ushort)((requestData[4] << 8) | requestData[5]);   // 寄存器数量
-        
+
                 // 2. 判断读取几个寄存器
                 byte[] responseData = null;
-        
+
                 if (quantity == 1)
                 {
                     // 读取1个寄存器：使用 textBox8 的值
                     string regValue = textBox8.Text.Trim();
                     ushort value = Convert.ToUInt16(regValue, 16);
-            
+
                     // 构建应答：地址 + 功能码 + 字节数(2) + 寄存器值(2字节) + CRC
                     responseData = BuildResponse(deviceAddr, funcCode, new ushort[] { value });
-            
+
                     //MessageBox.Show($"应答1个寄存器：{regValue} (0x{value:X4})");
                 }
                 else if (quantity == 2)
@@ -287,10 +287,10 @@ namespace ModBus调试助手
                     // 读取2个寄存器：使用 textBox8 和 textBox9 的值
                     string regValue1 = textBox8.Text.Trim();
                     string regValue2 = textBox9.Text.Trim();
-            
+
                     ushort value1 = Convert.ToUInt16(regValue1, 16);
                     ushort value2 = Convert.ToUInt16(regValue2, 16);
-            
+
                     // 构建应答：地址 + 功能码 + 字节数(4) + 寄存器值(4字节) + CRC
                     responseData = BuildResponse(deviceAddr, funcCode, new ushort[] { value1, value2 });
 
@@ -308,7 +308,7 @@ namespace ModBus调试助手
                     ushort value3 = Convert.ToUInt16(regValue3, 16);
 
                     // 构建应答：地址 + 功能码 + 字节数(4) + 寄存器值(4字节) + CRC
-                    responseData = BuildResponse(deviceAddr, funcCode, new ushort[] { value1, value2 ,value3});
+                    responseData = BuildResponse(deviceAddr, funcCode, new ushort[] { value1, value2, value3 });
 
                     serialPort1.Write(responseData, 0, responseData.Length);
                 }
@@ -317,7 +317,7 @@ namespace ModBus调试助手
                     MessageBox.Show("不支持的数量：" + quantity, "错误");
                     return null;
                 }
-        
+
                 return responseData;
             }
             catch (Exception ex)
@@ -330,28 +330,28 @@ namespace ModBus调试助手
         // 构建 ModBus 应答数据包
         private byte[] BuildResponse(byte deviceAddr, byte funcCode, ushort[] values)
         {
-        // 应答格式：地址 + 功能码 + 字节数 + 寄存器值(每个2字节) + CRC
-        int byteCount = values.Length * 2;  // 每个寄存器占2个字节
-        byte[] response = new byte[3 + byteCount + 2];  // 3 + 数据长度 + CRC
-    
-        int index = 0;
-        response[index++] = deviceAddr;      // 从站地址
-        response[index++] = funcCode;        // 功能码
-        response[index++] = (byte)byteCount; // 字节数
-    
-        // 添加寄存器值（高字节在前）
-        for (int i = 0; i < values.Length; i++)
-        {
-            response[index++] = (byte)(values[i] >> 8);   // 高字节
-            response[index++] = (byte)(values[i] & 0xFF); // 低字节
-        }
-    
-        // 计算CRC（不包含CRC本身）
-        ushort crc = CalculateCrc16Modbus(response, index);
-        response[index++] = (byte)(crc & 0xFF);      // CRC低字节
-        response[index] = (byte)((crc >> 8) & 0xFF); // CRC高字节
-    
-        return response;
+            // 应答格式：地址 + 功能码 + 字节数 + 寄存器值(每个2字节) + CRC
+            int byteCount = values.Length * 2;  // 每个寄存器占2个字节
+            byte[] response = new byte[3 + byteCount + 2];  // 3 + 数据长度 + CRC
+
+            int index = 0;
+            response[index++] = deviceAddr;      // 从站地址
+            response[index++] = funcCode;        // 功能码
+            response[index++] = (byte)byteCount; // 字节数
+
+            // 添加寄存器值（高字节在前）
+            for (int i = 0; i < values.Length; i++)
+            {
+                response[index++] = (byte)(values[i] >> 8);   // 高字节
+                response[index++] = (byte)(values[i] & 0xFF); // 低字节
+            }
+
+            // 计算CRC（不包含CRC本身）
+            ushort crc = CalculateCrc16Modbus(response, index);
+            response[index++] = (byte)(crc & 0xFF);      // CRC低字节
+            response[index] = (byte)((crc >> 8) & 0xFF); // CRC高字节
+
+            return response;
         }
         private void butJS_Click(object sender, EventArgs e)
         {
@@ -399,21 +399,7 @@ namespace ModBus调试助手
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
-            {
-                //if (!timer1.Enabled)
-                //{
-                //    timer1.Start();
-                   
-                //}
-            }
-            else
-            {
-                //if (timer1.Enabled)
-                //{
-                //    timer1.Stop();
-                //}
-            }
+
         }
 
         private void butBaudrate_Click(object sender, EventArgs e)
@@ -594,5 +580,628 @@ namespace ModBus调试助手
             serialPort1.PortName = comboBox1.Text;
         }
 
+        private void butSend1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 检查串口是否打开
+                if (!serialPort1.IsOpen)
+                {
+                    MessageBox.Show("请先打开串口！", "提示");
+                    return;
+                }
+
+                // 获取要发送的文本
+                string sendText = txtBoxSend1.Text.Trim();
+                if (string.IsNullOrEmpty(sendText))
+                {
+                    MessageBox.Show("请输入要发送的数据！", "提示");
+                    return;
+                }
+
+                // 判断是否勾选16进制发送
+                if (checkBoxHex1.Checked)
+                {
+                    // ===== 发送16进制数据 =====
+                    // 去掉空格，按每两个字符转换
+                    string hex = sendText.Replace(" ", "");
+                    if (hex.Length % 2 != 0)
+                    {
+                        MessageBox.Show("16进制数据长度必须为偶数！", "错误");
+                        return;
+                    }
+
+                    // 转换为字节数组
+                    byte[] data = new byte[hex.Length / 2];
+                    for (int i = 0; i < hex.Length; i += 2)
+                    {
+                        data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    }
+
+                    // 发送16进制数据
+                    serialPort1.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    // ===== 发送字符串数据 =====
+                    byte[] data = System.Text.Encoding.ASCII.GetBytes(sendText);
+                    serialPort1.Write(data, 0, data.Length);
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("16进制数据格式错误！请检查是否包含非法字符。", "错误");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("发送失败：" + ex.Message, "错误");
+            }
+        }
+
+        private void butSend2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 检查串口是否打开
+                if (!serialPort1.IsOpen)
+                {
+                    MessageBox.Show("请先打开串口！", "提示");
+                    return;
+                }
+
+                // 获取要发送的文本
+                string sendText = txtBoxSend2.Text.Trim();
+                if (string.IsNullOrEmpty(sendText))
+                {
+                    MessageBox.Show("请输入要发送的数据！", "提示");
+                    return;
+                }
+
+                // 判断是否勾选16进制发送
+                if (checkBoxHex2.Checked)
+                {
+                    // ===== 发送16进制数据 =====
+                    // 去掉空格，按每两个字符转换
+                    string hex = sendText.Replace(" ", "");
+                    if (hex.Length % 2 != 0)
+                    {
+                        MessageBox.Show("16进制数据长度必须为偶数！", "错误");
+                        return;
+                    }
+
+                    // 转换为字节数组
+                    byte[] data = new byte[hex.Length / 2];
+                    for (int i = 0; i < hex.Length; i += 2)
+                    {
+                        data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    }
+
+                    // 发送16进制数据
+                    serialPort1.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    // ===== 发送字符串数据 =====
+                    byte[] data = System.Text.Encoding.ASCII.GetBytes(sendText);
+                    serialPort1.Write(data, 0, data.Length);
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("16进制数据格式错误！请检查是否包含非法字符。", "错误");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("发送失败：" + ex.Message, "错误");
+            }
+        }
+
+        private void butSend3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 检查串口是否打开
+                if (!serialPort1.IsOpen)
+                {
+                    MessageBox.Show("请先打开串口！", "提示");
+                    return;
+                }
+
+                // 获取要发送的文本
+                string sendText = txtBoxSend3.Text.Trim();
+                if (string.IsNullOrEmpty(sendText))
+                {
+                    MessageBox.Show("请输入要发送的数据！", "提示");
+                    return;
+                }
+
+                // 判断是否勾选16进制发送
+                if (checkBoxHex3.Checked)
+                {
+                    // ===== 发送16进制数据 =====
+                    // 去掉空格，按每两个字符转换
+                    string hex = sendText.Replace(" ", "");
+                    if (hex.Length % 2 != 0)
+                    {
+                        MessageBox.Show("16进制数据长度必须为偶数！", "错误");
+                        return;
+                    }
+
+                    // 转换为字节数组
+                    byte[] data = new byte[hex.Length / 2];
+                    for (int i = 0; i < hex.Length; i += 2)
+                    {
+                        data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    }
+
+                    // 发送16进制数据
+                    serialPort1.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    // ===== 发送字符串数据 =====
+                    byte[] data = System.Text.Encoding.ASCII.GetBytes(sendText);
+                    serialPort1.Write(data, 0, data.Length);
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("16进制数据格式错误！请检查是否包含非法字符。", "错误");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("发送失败：" + ex.Message, "错误");
+            }
+        }
+
+        private void butSend4_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 检查串口是否打开
+                if (!serialPort1.IsOpen)
+                {
+                    MessageBox.Show("请先打开串口！", "提示");
+                    return;
+                }
+
+                // 获取要发送的文本
+                string sendText = txtBoxSend4.Text.Trim();
+                if (string.IsNullOrEmpty(sendText))
+                {
+                    MessageBox.Show("请输入要发送的数据！", "提示");
+                    return;
+                }
+
+                // 判断是否勾选16进制发送
+                if (checkBoxHex4.Checked)
+                {
+                    // ===== 发送16进制数据 =====
+                    // 去掉空格，按每两个字符转换
+                    string hex = sendText.Replace(" ", "");
+                    if (hex.Length % 2 != 0)
+                    {
+                        MessageBox.Show("16进制数据长度必须为偶数！", "错误");
+                        return;
+                    }
+
+                    // 转换为字节数组
+                    byte[] data = new byte[hex.Length / 2];
+                    for (int i = 0; i < hex.Length; i += 2)
+                    {
+                        data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    }
+
+                    // 发送16进制数据
+                    serialPort1.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    // ===== 发送字符串数据 =====
+                    byte[] data = System.Text.Encoding.ASCII.GetBytes(sendText);
+                    serialPort1.Write(data, 0, data.Length);
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("16进制数据格式错误！请检查是否包含非法字符。", "错误");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("发送失败：" + ex.Message, "错误");
+            }
+        }
+
+        private void butSend5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 检查串口是否打开
+                if (!serialPort1.IsOpen)
+                {
+                    MessageBox.Show("请先打开串口！", "提示");
+                    return;
+                }
+
+                // 获取要发送的文本
+                string sendText = txtBoxSend5.Text.Trim();
+                if (string.IsNullOrEmpty(sendText))
+                {
+                    MessageBox.Show("请输入要发送的数据！", "提示");
+                    return;
+                }
+
+                // 判断是否勾选16进制发送
+                if (checkBoxHex5.Checked)
+                {
+                    // ===== 发送16进制数据 =====
+                    // 去掉空格，按每两个字符转换
+                    string hex = sendText.Replace(" ", "");
+                    if (hex.Length % 2 != 0)
+                    {
+                        MessageBox.Show("16进制数据长度必须为偶数！", "错误");
+                        return;
+                    }
+
+                    // 转换为字节数组
+                    byte[] data = new byte[hex.Length / 2];
+                    for (int i = 0; i < hex.Length; i += 2)
+                    {
+                        data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    }
+
+                    // 发送16进制数据
+                    serialPort1.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    // ===== 发送字符串数据 =====
+                    byte[] data = System.Text.Encoding.ASCII.GetBytes(sendText);
+                    serialPort1.Write(data, 0, data.Length);
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("16进制数据格式错误！请检查是否包含非法字符。", "错误");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("发送失败：" + ex.Message, "错误");
+            }
+        }
+
+        private void butSend6_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 检查串口是否打开
+                if (!serialPort1.IsOpen)
+                {
+                    MessageBox.Show("请先打开串口！", "提示");
+                    return;
+                }
+
+                // 获取要发送的文本
+                string sendText = txtBoxSend6.Text.Trim();
+                if (string.IsNullOrEmpty(sendText))
+                {
+                    MessageBox.Show("请输入要发送的数据！", "提示");
+                    return;
+                }
+
+                // 判断是否勾选16进制发送
+                if (checkBoxHex6.Checked)
+                {
+                    // ===== 发送16进制数据 =====
+                    // 去掉空格，按每两个字符转换
+                    string hex = sendText.Replace(" ", "");
+                    if (hex.Length % 2 != 0)
+                    {
+                        MessageBox.Show("16进制数据长度必须为偶数！", "错误");
+                        return;
+                    }
+
+                    // 转换为字节数组
+                    byte[] data = new byte[hex.Length / 2];
+                    for (int i = 0; i < hex.Length; i += 2)
+                    {
+                        data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    }
+
+                    // 发送16进制数据
+                    serialPort1.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    // ===== 发送字符串数据 =====
+                    byte[] data = System.Text.Encoding.ASCII.GetBytes(sendText);
+                    serialPort1.Write(data, 0, data.Length);
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("16进制数据格式错误！请检查是否包含非法字符。", "错误");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("发送失败：" + ex.Message, "错误");
+            }
+        }
+
+        private void butSend7_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 检查串口是否打开
+                if (!serialPort1.IsOpen)
+                {
+                    MessageBox.Show("请先打开串口！", "提示");
+                    return;
+                }
+
+                // 获取要发送的文本
+                string sendText = txtBoxSend7.Text.Trim();
+                if (string.IsNullOrEmpty(sendText))
+                {
+                    MessageBox.Show("请输入要发送的数据！", "提示");
+                    return;
+                }
+
+                // 判断是否勾选16进制发送
+                if (checkBoxHex7.Checked)
+                {
+                    // ===== 发送16进制数据 =====
+                    // 去掉空格，按每两个字符转换
+                    string hex = sendText.Replace(" ", "");
+                    if (hex.Length % 2 != 0)
+                    {
+                        MessageBox.Show("16进制数据长度必须为偶数！", "错误");
+                        return;
+                    }
+
+                    // 转换为字节数组
+                    byte[] data = new byte[hex.Length / 2];
+                    for (int i = 0; i < hex.Length; i += 2)
+                    {
+                        data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    }
+
+                    // 发送16进制数据
+                    serialPort1.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    // ===== 发送字符串数据 =====
+                    byte[] data = System.Text.Encoding.ASCII.GetBytes(sendText);
+                    serialPort1.Write(data, 0, data.Length);
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("16进制数据格式错误！请检查是否包含非法字符。", "错误");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("发送失败：" + ex.Message, "错误");
+            }
+        }
+
+        private void butSend8_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 检查串口是否打开
+                if (!serialPort1.IsOpen)
+                {
+                    MessageBox.Show("请先打开串口！", "提示");
+                    return;
+                }
+
+                // 获取要发送的文本
+                string sendText = txtBoxSend8.Text.Trim();
+                if (string.IsNullOrEmpty(sendText))
+                {
+                    MessageBox.Show("请输入要发送的数据！", "提示");
+                    return;
+                }
+
+                // 判断是否勾选16进制发送
+                if (checkBoxHex8.Checked)
+                {
+                    // ===== 发送16进制数据 =====
+                    // 去掉空格，按每两个字符转换
+                    string hex = sendText.Replace(" ", "");
+                    if (hex.Length % 2 != 0)
+                    {
+                        MessageBox.Show("16进制数据长度必须为偶数！", "错误");
+                        return;
+                    }
+
+                    // 转换为字节数组
+                    byte[] data = new byte[hex.Length / 2];
+                    for (int i = 0; i < hex.Length; i += 2)
+                    {
+                        data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    }
+
+                    // 发送16进制数据
+                    serialPort1.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    // ===== 发送字符串数据 =====
+                    byte[] data = System.Text.Encoding.ASCII.GetBytes(sendText);
+                    serialPort1.Write(data, 0, data.Length);
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("16进制数据格式错误！请检查是否包含非法字符。", "错误");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("发送失败：" + ex.Message, "错误");
+            }
+        }
+
+        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox4.Checked)
+            {
+                if (!timer2.Enabled)
+                {
+                    timer2.Start();
+
+                }
+            }
+            else
+            {
+                if (timer2.Enabled)
+                {
+                    timer2.Stop();
+                }
+            }
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            timer2.Stop();
+            xhsend();
+            timer2.Start();
+        }
+        private void xhsend()
+        {
+            try
+            {
+                if (!serialPort1.IsOpen)
+                {
+                    label3.Text = "请先打开串口！";
+                    return;
+                }
+
+                // 所有控件数组
+                TextBox[] sendBoxes = { txtBoxSend1, txtBoxSend2, txtBoxSend3, txtBoxSend4,
+                                    txtBoxSend5, txtBoxSend6, txtBoxSend7, txtBoxSend8 };
+                CheckBox[] hexBoxes = { checkBoxHex1, checkBoxHex2, checkBoxHex3, checkBoxHex4,
+                                    checkBoxHex5, checkBoxHex6, checkBoxHex7, checkBoxHex8 };
+                TextBox[] orderBoxes = { txtBoxSx1, txtBoxSx2, txtBoxSx3, txtBoxSx4,
+                                     txtBoxSx5, txtBoxSx6, txtBoxSx7, txtBoxSx8 };
+                TextBox[] delayBoxes = { txtBoxDealy1, txtBoxDealy2, txtBoxDealy3, txtBoxDealy4,
+                                     txtBoxDealy5, txtBoxDealy6, txtBoxDealy7, txtBoxDealy8 };
+
+                // 解析顺序
+                List<int> orderList = new List<int>();
+                bool allZero = true;
+
+                for (int i = 0; i < 8; i++)
+                {
+                    string orderText = orderBoxes[i].Text.Trim();
+                    if (string.IsNullOrEmpty(orderText)) continue;  // 顺序框为空，跳过
+
+                    int num;
+                    if (int.TryParse(orderText, out num))
+                    {
+                        if (num != 0) allZero = false;
+                        int sendIndex = num - 1;
+
+                        // 检查索引是否有效
+                        if (sendIndex >= 0 && sendIndex < 8 && !orderList.Contains(sendIndex))
+                        {
+                            // ===== 关键判断：检查对应的发送框内容是否为空 =====
+                            if (!string.IsNullOrEmpty(sendBoxes[sendIndex].Text.Trim()))
+                            {
+                                orderList.Add(sendIndex);
+                            }
+                            else
+                            {
+                                // 发送框为空，跳过
+                                label3.Text = "跳过第 " + (i + 1) + " 条指令：发送框 " + (sendIndex + 1) + " 内容为空";
+                            }
+                        }
+                    }
+                }
+
+                // 如果全部为0，按1-8自然顺序
+                if (allZero && orderList.Count == 0)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if (!string.IsNullOrEmpty(sendBoxes[i].Text.Trim()))
+                        {
+                            orderList.Add(i);
+                        }
+                    }
+                }
+
+                if (orderList.Count == 0)
+                {
+                    label3.Text = "没有可发送的数据！\r\n请填写发送内容或在顺序框中填写编号。";
+                    return;
+                }
+
+                // 按顺序发送
+                for (int i = 0; i < orderList.Count; i++)
+                {
+                    int idx = orderList[i];
+                    string content = sendBoxes[idx].Text.Trim();
+                    if (string.IsNullOrEmpty(content)) continue;
+
+                    bool isHex = hexBoxes[idx].Checked;
+
+                    // 读取延时
+                    int delay = 0;
+                    string delayText = delayBoxes[idx].Text.Trim();
+                    if (!string.IsNullOrEmpty(delayText))
+                    {
+                        int.TryParse(delayText, out delay);
+                    }
+
+                    // 发送数据
+                    SendData(content, isHex);
+
+                    // 延时（如果不是最后一条）
+                    if (delay > 0 && i < orderList.Count - 1)
+                    {
+                        System.Threading.Thread.Sleep(delay);
+                    }
+                }
+
+                label3.Text = "发送完成！共发送 " + orderList.Count + " 条指令";
+            }
+            catch (Exception ex)
+            {
+                label3.Text = "发送失败：" + ex.Message;
+            }
+        }
+
+        // 发送单个数据（16进制或字符串）
+        private void SendData(string content, bool isHex)
+        {
+            if (isHex)
+            {
+                // 16进制发送
+                string hex = content.Replace(" ", "").Replace("\t", "");
+                if (string.IsNullOrEmpty(hex)) return;
+
+                if (hex.Length % 2 != 0)
+                {
+                    label3.Text = "16进制数据长度必须为偶数！\r\n当前输入：" + content;
+                    return;
+                }
+
+                byte[] data = new byte[hex.Length / 2];
+                for (int i = 0; i < hex.Length; i += 2)
+                {
+                    data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                }
+                serialPort1.Write(data, 0, data.Length);
+            }
+            else
+            {
+                // 字符串发送
+                byte[] data = System.Text.Encoding.ASCII.GetBytes(content);
+                serialPort1.Write(data, 0, data.Length);
+            }
+        }
     }
 }
