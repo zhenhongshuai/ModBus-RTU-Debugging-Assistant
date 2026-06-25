@@ -19,8 +19,8 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
 
 1.  ModBus-RTU 主机发送命令CRC计算
 2.  ModBus-RTU 从机调试自动应答
-3.  ![](https://gitee.com/zhenhongshuai/ModBus-RTU-Debugging-Assistant/blob/master/%E7%95%8C%E9%9D%A2.png)
-
+3.  
+![](https://raw.giteeusercontent.com/zhenhongshuai/ModBus-RTU-Debugging-Assistant/raw/master/%E7%95%8C%E9%9D%A2.png?metadata=eyJyIjoibWFzdGVyIiwiZnAiOiLnlYzpnaIucG5nIiwidWlkIjoxMzE0Mzc5NSwicGlkIjo0ODcyMzEyNywic3RvIjoiZ2l0LXNoYXJkaW5nLXN0by0xMHQtMDQwIiwicnAiOiJyZXBvcy85Zi9mMS85ZmYxYTc2YTY3ZTk1OGYwY2VjNzMyMzExMGE5ZDAyNThiZjFkNWJhNTkzMGRmYWFhMjQ4MzliOTU4NzhkNTQyLmdpdCIsImlzcCI6dHJ1ZSwiZXhwaXJlX2F0IjoxNzgyMzYxMjAwfQ&signature=hE60hSUAMmAzgbRa85i3ifimGoJRhBwKC7h9UQp9d_M)
 #### 参与贡献
 
 1.  Fork 本仓库
