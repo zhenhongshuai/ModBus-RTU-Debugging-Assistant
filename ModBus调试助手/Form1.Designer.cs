@@ -121,6 +121,8 @@
             this.butSend1 = new System.Windows.Forms.Button();
             this.txtBoxSend1 = new System.Windows.Forms.TextBox();
             this.checkBoxHex1 = new System.Windows.Forms.CheckBox();
+            this.txtReceiveBox1 = new System.Windows.Forms.TextBox();
+            this.label28 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -988,11 +990,33 @@
             this.checkBoxHex1.TabIndex = 79;
             this.checkBoxHex1.UseVisualStyleBackColor = true;
             // 
+            // txtReceiveBox1
+            // 
+            this.txtReceiveBox1.Location = new System.Drawing.Point(5, 479);
+            this.txtReceiveBox1.Multiline = true;
+            this.txtReceiveBox1.Name = "txtReceiveBox1";
+            this.txtReceiveBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtReceiveBox1.Size = new System.Drawing.Size(884, 225);
+            this.txtReceiveBox1.TabIndex = 122;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label28.ForeColor = System.Drawing.Color.Blue;
+            this.label28.Location = new System.Drawing.Point(12, 456);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(279, 20);
+            this.label28.TabIndex = 123;
+            this.label28.Text = "ModBus Receive-------------";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1488, 787);
+            this.Controls.Add(this.label28);
+            this.Controls.Add(this.txtReceiveBox1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.textBox10);
@@ -1141,6 +1165,8 @@
         private System.Windows.Forms.Button butSend1;
         private System.Windows.Forms.TextBox txtBoxSend1;
         private System.Windows.Forms.CheckBox checkBoxHex1;
+        private System.Windows.Forms.TextBox txtReceiveBox1;
+        private System.Windows.Forms.Label label28;
     }
 }
 

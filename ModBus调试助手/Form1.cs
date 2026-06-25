@@ -208,54 +208,97 @@ namespace ModBus调试助手
         /// <param name="e"></param>
         private void rcedata(object sender, EventArgs e)
         {
-            int n = serialPort1.BytesToRead;
-            if (n > 6)
+            try
             {
-                byte[] buf = new byte[n];
-                serialPort1.Read(buf, 0, n);
-                if (buf[1] == 0x06 && CMD == 0x00)
+                int n = serialPort1.BytesToRead;
+                if (n > 6)
                 {
-                    label3.Text = "设置成功!";
-                    label5.Text = DeviceID.ToString("X2");
-                    serialPort1.DiscardInBuffer();
-                }
+                    byte[] buf = new byte[n];
+                    serialPort1.Read(buf, 0, n);
 
-                if (buf[1] == 0x06 && CMD == 0x01)
-                {
-                    label3.Text = "设置成功!";
-                    string bdr = buf[5].ToString("X2");
-                    if (bdr == "00")
+                    // ===== 显示接收到的原始数据（16进制）=====
+                    string time = DateTime.Now.ToString("HH:mm:ss.fff");
+                    string hexDisplay = BitConverter.ToString(buf).Replace("-", " ");
+                    AppendToLog(time + " [接收] " + hexDisplay);
+
+                    if (buf[1] == 0x06 && CMD == 0x00)
                     {
-                        label13.Text = "1200";
-                        serialPort1.BaudRate = 1200;
+                        label3.Text = "设置成功!";
+                        label5.Text = DeviceID.ToString("X2");
+                        serialPort1.DiscardInBuffer();
+                        AppendToLog(time + " [事件] 设置成功 (CMD=0x00)");
                     }
-                    if (bdr == "01")
+
+                    if (buf[1] == 0x06 && CMD == 0x01)
                     {
-                        label13.Text = "2400";
-                        serialPort1.BaudRate = 2400;
+                        label3.Text = "设置成功!";
+                        string bdr = buf[5].ToString("X2");
+                        if (bdr == "00")
+                        {
+                            label13.Text = "1200";
+                            serialPort1.BaudRate = 1200;
+                        }
+                        if (bdr == "01")
+                        {
+                            label13.Text = "2400";
+                            serialPort1.BaudRate = 2400;
+                        }
+                        if (bdr == "02")
+                        {
+                            label13.Text = "4800";
+                            serialPort1.BaudRate = 4800;
+                        }
+                        if (bdr == "03")
+                        {
+                            label13.Text = "9600";
+                            serialPort1.BaudRate = 9600;
+                        }
+                        if (bdr == "04")
+                        {
+                            label13.Text = "19200";
+                            serialPort1.BaudRate = 19200;
+                        }
+                        serialPort1.DiscardInBuffer();
+                        AppendToLog(time + " [事件] 设置成功 (CMD=0x01) 波特率=" + label13.Text);
                     }
-                    if (bdr == "02")
+
+                    if (buf[1] == 0x04 && checkBox1.Checked == true)
                     {
-                        label13.Text = "4800";
-                        serialPort1.BaudRate = 4800;
+                        //AppendToLog(time + " [事件] 处理ModBus请求 (功能码0x04)");
+                        ProcessModBusRequest(buf);
                     }
-                    if (bdr == "03")
-                    {
-                        label13.Text = "9600";
-                        serialPort1.BaudRate = 9600;
-                    }
-                    if (bdr == "04")
-                    {
-                        label13.Text = "19200";
-                        serialPort1.BaudRate = 19200;
-                    }
-                    serialPort1.DiscardInBuffer();
-                }
-                if (buf[1] == 0x04 && checkBox1.Checked == true)
-                {
-                    ProcessModBusRequest(buf);
                 }
             }
+            catch (Exception ex)
+            {
+                string time = DateTime.Now.ToString("HH:mm:ss.fff");
+                AppendToLog(time + " [错误] 接收处理失败: " + ex.Message);
+            }
+        }
+
+        // ===== 日志添加方法 =====
+        private void AppendToLog(string message)
+        {
+            // 确保在UI线程执行
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<string>(AppendToLog), message);
+                return;
+            }
+
+            txtReceiveBox1.AppendText(message + Environment.NewLine);
+
+            // 限制最大行数（例如1000行），防止内存溢出
+            if (txtReceiveBox1.Lines.Length > 1000)
+            {
+                string[] lines = txtReceiveBox1.Lines;
+                string[] newLines = new string[500];
+                Array.Copy(lines, lines.Length - 500, newLines, 0, 500);
+                txtReceiveBox1.Lines = newLines;
+            }
+
+            // 自动滚动到最后一行
+            txtReceiveBox1.ScrollToCaret();
         }
         // 主机发送数据处理并返回应答
         private byte[] ProcessModBusRequest(byte[] requestData)
@@ -1195,12 +1238,19 @@ namespace ModBus调试助手
                     data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
                 }
                 serialPort1.Write(data, 0, data.Length);
+                // ===== 显示发送日志到 txtReceiveBox1 =====
+                string time = DateTime.Now.ToString("HH:mm:ss.fff");
+                string hexDisplay = BitConverter.ToString(data).Replace("-", " ");
+                AppendToLog(time + " [发送] " + hexDisplay);
             }
             else
             {
                 // 字符串发送
                 byte[] data = System.Text.Encoding.ASCII.GetBytes(content);
                 serialPort1.Write(data, 0, data.Length);
+                // ===== 显示发送日志到 txtReceiveBox1 =====
+                string time = DateTime.Now.ToString("HH:mm:ss.fff");
+                AppendToLog(time + " [发送] " + content);
             }
         }
     }
