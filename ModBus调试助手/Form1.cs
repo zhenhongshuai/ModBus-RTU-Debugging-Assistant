@@ -261,11 +261,21 @@ namespace ModBus调试助手
                         serialPort1.DiscardInBuffer();
                         AppendToLog(time + " [事件] 设置成功 (CMD=0x01) 波特率=" + label13.Text);
                     }
-
-                    if (buf[1] == 0x04 && checkBox1.Checked == true)
+                    //自动回复
+                    if (buf[0] == Convert.ToByte(txtADD1.Text, 16) && buf[1] == 0x04 && checkBoxADD1.Checked == true)
                     {
                         //AppendToLog(time + " [事件] 处理ModBus请求 (功能码0x04)");
-                        ProcessModBusRequest(buf);
+                        ProcessModBusRequest(buf, textBox8.Text, textBox9.Text, textBox10.Text);
+                    }
+                    if (buf[0] == Convert.ToByte(txtADD2.Text, 16) && buf[1] == 0x04 && checkBoxADD2.Checked == true)
+                    {
+                        //AppendToLog(time + " [事件] 处理ModBus请求 (功能码0x04)");
+                        ProcessModBusRequest(buf, textBox14.Text, textBox13.Text, textBox12.Text);
+                    }
+                    if (buf[0] == Convert.ToByte(txtADD3.Text, 16) && buf[1] == 0x04 && checkBoxADD3.Checked == true)
+                    {
+                        //AppendToLog(time + " [事件] 处理ModBus请求 (功能码0x04)");
+                        ProcessModBusRequest(buf, textBox18.Text, textBox17.Text, textBox16.Text);
                     }
                 }
             }
@@ -300,8 +310,7 @@ namespace ModBus调试助手
             // 自动滚动到最后一行
             txtReceiveBox1.ScrollToCaret();
         }
-        // 主机发送数据处理并返回应答
-        private byte[] ProcessModBusRequest(byte[] requestData)
+        private byte[] ProcessModBusRequest(byte[] requestData, string regValue1, string regValue2 = "", string regValue3 = "")
         {
             try
             {
@@ -316,43 +325,26 @@ namespace ModBus调试助手
 
                 if (quantity == 1)
                 {
-                    // 读取1个寄存器：使用 textBox8 的值
-                    string regValue = textBox8.Text.Trim();
-                    ushort value = Convert.ToUInt16(regValue, 16);
-
-                    // 构建应答：地址 + 功能码 + 字节数(2) + 寄存器值(2字节) + CRC
+                    // 读取1个寄存器：使用传入的参数
+                    ushort value = Convert.ToUInt16(regValue1, 16);
                     responseData = BuildResponse(deviceAddr, funcCode, new ushort[] { value });
-
-                    //MessageBox.Show($"应答1个寄存器：{regValue} (0x{value:X4})");
+                    serialPort1.Write(responseData, 0, responseData.Length);
                 }
                 else if (quantity == 2)
                 {
-                    // 读取2个寄存器：使用 textBox8 和 textBox9 的值
-                    string regValue1 = textBox8.Text.Trim();
-                    string regValue2 = textBox9.Text.Trim();
-
+                    // 读取2个寄存器：使用传入的参数
                     ushort value1 = Convert.ToUInt16(regValue1, 16);
                     ushort value2 = Convert.ToUInt16(regValue2, 16);
-
-                    // 构建应答：地址 + 功能码 + 字节数(4) + 寄存器值(4字节) + CRC
                     responseData = BuildResponse(deviceAddr, funcCode, new ushort[] { value1, value2 });
-
                     serialPort1.Write(responseData, 0, responseData.Length);
                 }
                 else if (quantity == 3)
                 {
-                    // 读取2个寄存器：使用 textBox8 和 textBox9 的值
-                    string regValue1 = textBox8.Text.Trim();
-                    string regValue2 = textBox9.Text.Trim();
-                    string regValue3 = textBox10.Text.Trim();
-
+                    // 读取3个寄存器：使用传入的参数
                     ushort value1 = Convert.ToUInt16(regValue1, 16);
                     ushort value2 = Convert.ToUInt16(regValue2, 16);
                     ushort value3 = Convert.ToUInt16(regValue3, 16);
-
-                    // 构建应答：地址 + 功能码 + 字节数(4) + 寄存器值(4字节) + CRC
                     responseData = BuildResponse(deviceAddr, funcCode, new ushort[] { value1, value2, value3 });
-
                     serialPort1.Write(responseData, 0, responseData.Length);
                 }
                 else
@@ -438,11 +430,6 @@ namespace ModBus调试助手
             {
                 MessageBox.Show("请输入有效的十六进制字符（0-9, A-F）！\n" + ex.Message);
             }
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void butBaudrate_Click(object sender, EventArgs e)
